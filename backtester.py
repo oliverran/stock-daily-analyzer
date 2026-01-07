@@ -6,6 +6,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import yfinance as yf
+import logging
 from datetime import datetime, date, timedelta
 from typing import List, Dict, Optional, Tuple
 
@@ -16,6 +17,8 @@ from database import (
     save_price_tracking,
     get_overall_accuracy
 )
+
+logger = logging.getLogger(__name__)
 
 
 class Backtester:
@@ -94,18 +97,18 @@ class Backtester:
 
     def run_backtest(self) -> Optional[Dict]:
         """运行回测"""
-        print(f"\n{'='*50}")
-        print(f"回测验证 - 验证 {self.days_ago} 天前({self.backtest_date})的推荐")
-        print(f"{'='*50}\n")
+        logger.info(f"\n{'='*50}")
+        logger.info(f"回测验证 - 验证 {self.days_ago} 天前({self.backtest_date})的推荐")
+        logger.info(f"{'='*50}\n")
 
         # 获取历史推荐
         recommendations = get_recommendations_for_backtest(self.days_ago)
 
         if not recommendations:
-            print(f"没有找到 {self.days_ago} 天前的推荐记录")
+            logger.info(f"没有找到 {self.days_ago} 天前的推荐记录")
             return None
 
-        print(f"找到 {len(recommendations)} 条推荐记录，开始验证...")
+        logger.info(f"找到 {len(recommendations)} 条推荐记录，开始验证...")
 
         # 评估每条推荐
         results = []
@@ -116,12 +119,12 @@ class Backtester:
                 "✗" if eval_result['result'] == 'wrong' else "-"
             )
             if eval_result['return_pct'] is not None:
-                print(f"  [{status}] {eval_result['name']}: {eval_result['return_pct']:+.2%}")
+                logger.info(f"  [{status}] {eval_result['name']}: {eval_result['return_pct']:+.2%}")
 
         # 统计结果
         valid_results = [r for r in results if r['return_pct'] is not None]
         if not valid_results:
-            print("没有有效的回测结果")
+            logger.info("没有有效的回测结果")
             return None
 
         correct_count = sum(1 for r in valid_results if r['result'] == 'correct')
@@ -166,7 +169,7 @@ class Backtester:
         try:
             save_backtest_result(backtest_result)
         except Exception as e:
-            print(f"保存回测结果失败: {e}")
+            logger.error(f"保存回测结果失败: {e}")
 
         return backtest_result
 

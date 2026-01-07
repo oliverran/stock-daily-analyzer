@@ -13,6 +13,7 @@ from datetime import datetime, date, timedelta
 from typing import List, Dict, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+import logging
 
 from config import (
     RSI_PERIOD, RSI_OVERSOLD, RSI_OVERBOUGHT, RSI_OVERSOLD_SCREEN,
@@ -23,6 +24,7 @@ from config import (
     get_yfinance_ticker, is_valid_stock
 )
 
+logger = logging.getLogger(__name__)
 
 class StockAnalyzer:
     """A股市场分析器"""
@@ -43,10 +45,10 @@ class StockAnalyzer:
                 # 过滤创业板和ST股票
                 if is_valid_stock(code) and 'ST' not in name:
                     stocks.append((code, name))
-            print(f"获取到 {len(stocks)} 只有效股票（排除创业板和ST）")
+            logger.info(f"获取到 {len(stocks)} 只有效股票（排除创业板和ST）")
             return stocks
         except Exception as e:
-            print(f"获取股票列表失败: {e}")
+            logger.error(f"获取股票列表失败: {e}")
             # 降级使用配置的热门股票
             return self._get_sector_stocks()
 
@@ -189,7 +191,7 @@ class StockAnalyzer:
         if max_stocks:
             stocks = stocks[:max_stocks]
 
-        print(f"开始扫描 {len(stocks)} 只股票...")
+        logger.info(f"开始扫描 {len(stocks)} 只股票...")
         results = []
         failed = 0
 
@@ -213,9 +215,9 @@ class StockAnalyzer:
 
                 # 进度显示
                 if (i + 1) % 100 == 0:
-                    print(f"进度: {i + 1}/{len(stocks)}, 成功: {len(results)}, 失败: {failed}")
+                    logger.info(f"进度: {i + 1}/{len(stocks)}, 成功: {len(results)}, 失败: {failed}")
 
-        print(f"扫描完成: 成功 {len(results)}, 失败 {failed}")
+        logger.info(f"扫描完成: 成功 {len(results)}, 失败 {failed}")
         return results
 
     def screen_oversold_rebound(self, stocks: List[Dict]) -> List[Dict]:
@@ -322,15 +324,15 @@ class StockAnalyzer:
             recommendations: 格式化的推荐列表（用于存储）
             summary: 分析摘要（用于显示）
         """
-        print(f"\n{'='*50}")
-        print(f"开始A股市场分析 - {self.analysis_date}")
-        print(f"{'='*50}\n")
+        logger.info(f"\n{'='*50}")
+        logger.info(f"开始A股市场分析 - {self.analysis_date}")
+        logger.info(f"{'='*50}\n")
 
         # 1. 扫描市场
         all_stocks = self.scan_market(max_stocks)
 
         if not all_stocks:
-            print("未获取到任何股票数据")
+            logger.warning("未获取到任何股票数据")
             return [], {}
 
         # 2. 生成推荐
