@@ -37,3 +37,7 @@ wheels/
 # IDEs
 .idea/
 .vscode/
+
+# Node
+node_modules/
+web/node_modules/

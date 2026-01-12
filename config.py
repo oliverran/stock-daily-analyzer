@@ -2,6 +2,15 @@
 Stock Daily Analyzer - Configuration
 """
 from pathlib import Path
+import os
+
+# 自动清理可能导致连接错误的代理设置 (针对 Connection refused 问题)
+for proxy_key in ["http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"]:
+    if os.environ.get(proxy_key):
+        # 如果检测到本地代理设置但服务未运行，可能会导致 akshare/yfinance 报错
+        # 这里选择临时移除环境变量以确保直连可用 (尤其是 akshare 不需要代理)
+        # 用户若需代理，请确保代理软件(如 Clash)已启动并监听对应端口
+        del os.environ[proxy_key]
 
 # 项目路径
 BASE_DIR = Path(__file__).parent
@@ -40,11 +49,11 @@ SECTOR_STOCKS = {
     "汽车": ["600104", "000625", "601238", "600660", "000800"],
 }
 
-# 技术指标参数
+# 策略参数
 RSI_PERIOD = 14
 RSI_OVERSOLD = 30
 RSI_OVERBOUGHT = 70
-RSI_OVERSOLD_SCREEN = 45  # 筛选时的超卖阈值（宽松一些）
+RSI_OVERSOLD_SCREEN = 45  # 筛选阈值
 
 MACD_FAST = 12
 MACD_SLOW = 26
@@ -56,9 +65,9 @@ BOLLINGER_STD = 2
 MA_PERIODS = [5, 10, 20, 60]
 
 # 回测参数
-BACKTEST_DAYS = 3  # 验证N天前的推荐
-CORRECT_THRESHOLD = 0.01  # 涨幅>1%算正确
-WRONG_THRESHOLD = -0.01  # 跌幅>1%算错误
+BACKTEST_DAYS = 1  # 验证1天前的推荐 (原为3天)
+CORRECT_THRESHOLD = 0.02  # 涨幅超过2%视为正确
+WRONG_THRESHOLD = -0.02   # 跌幅超过2%视为错误
 
 # 数据获取
 DATA_PERIOD = "2mo"  # 获取最近2个月数据
@@ -66,7 +75,7 @@ DATA_TIMEOUT = 10  # 数据获取超时秒数
 
 # 筛选输出配置
 MAX_RECOMMENDATIONS_PER_TYPE = 5  # 每类最多推荐数量
-MIN_VOLUME_RATIO = 1.2  # 放量筛选最小量比
+MIN_VOLUME_RATIO = 1.5  # 最小量比
 
 # 市场分析配置
 MARKET_INDICES = {

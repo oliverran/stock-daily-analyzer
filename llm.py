@@ -189,7 +189,8 @@ def _call_ark(prompt: str) -> Optional[Dict]:
         logger.info(f"LLM_FULL_PROMPT: {prompt}")
 
     try:
-        resp = requests.post(base_url, headers=headers, data=json.dumps(payload), timeout=30)
+        # Increase timeout to 60s to avoid ReadTimeout on complex queries
+        resp = requests.post(base_url, headers=headers, data=json.dumps(payload), timeout=60)
         resp.raise_for_status()
         data = resp.json()
         
