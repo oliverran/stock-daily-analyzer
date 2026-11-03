@@ -1,5 +1,4 @@
 import importlib
-import sys
 
 
 def main() -> int:

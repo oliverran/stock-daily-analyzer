@@ -3,11 +3,10 @@ Stock Daily Analyzer - Backtest Module
 回测验证历史推荐的准确性
 """
 import warnings
-warnings.filterwarnings('ignore')
 
 import yfinance as yf
-from datetime import datetime, date, timedelta
-from typing import List, Dict, Optional, Tuple
+from datetime import date, timedelta
+from typing import Dict, Optional, Tuple
 
 from config import BACKTEST_DAYS, CORRECT_THRESHOLD, WRONG_THRESHOLD, DATA_TIMEOUT
 from database import (
@@ -16,6 +15,8 @@ from database import (
     save_price_tracking,
     get_overall_accuracy
 )
+
+warnings.filterwarnings('ignore')
 
 
 class Backtester:
@@ -33,7 +34,7 @@ class Backtester:
             data = stock.history(period="5d", timeout=DATA_TIMEOUT)
             if not data.empty:
                 return data['Close'].iloc[-1]
-        except Exception as e:
+        except Exception:
             pass
         return None
 
@@ -77,7 +78,7 @@ class Backtester:
                 close_price=current_price,
                 change_pct=return_pct
             )
-        except Exception as e:
+        except Exception:
             pass
 
         return {

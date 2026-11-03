@@ -5,10 +5,9 @@ Stock Daily Analyzer - Attribution Module
 """
 import logging
 import pandas as pd
-import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict
 from config import get_yfinance_ticker
 
 logger = logging.getLogger(__name__)
