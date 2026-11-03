@@ -1,6 +1,6 @@
 from datetime import date
 from pathlib import Path
-from typing import Dict, Optional, Tuple, List, Any
+from typing import Dict, Optional, List, Any
 
 from config import REPORT_DIR, BACKTEST_DAYS
 

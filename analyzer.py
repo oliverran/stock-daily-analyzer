@@ -3,19 +3,17 @@ Stock Daily Analyzer - Core Analysis Module
 支持全市场A股扫描（除创业板外）
 """
 import warnings
-warnings.filterwarnings('ignore')
 
 import pandas as pd
 import numpy as np
 import yfinance as yf
 import akshare as ak
-from datetime import datetime, date, timedelta
+from datetime import date
 from typing import List, Dict, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
 
 from config import (
-    RSI_PERIOD, RSI_OVERSOLD, RSI_OVERBOUGHT, RSI_OVERSOLD_SCREEN,
+    RSI_PERIOD, RSI_OVERSOLD_SCREEN,
     MACD_FAST, MACD_SLOW, MACD_SIGNAL,
     BOLLINGER_PERIOD, BOLLINGER_STD, MA_PERIODS,
     DATA_PERIOD, DATA_TIMEOUT, SECTOR_STOCKS,
@@ -23,6 +21,8 @@ from config import (
     get_yfinance_ticker, is_valid_stock
 )
 from strategies import default_strategies
+
+warnings.filterwarnings('ignore')
 
 
 class StockAnalyzer:
@@ -68,7 +68,7 @@ class StockAnalyzer:
             if data.empty or len(data) < 20:
                 return None
             return data
-        except Exception as e:
+        except Exception:
             return None
 
     def calculate_rsi(self, prices: pd.Series, period: int = RSI_PERIOD) -> pd.Series:
@@ -174,7 +174,7 @@ class StockAnalyzer:
                 'vol_ratio': vol_ratio,
                 'ma_values': ma_values,
             }
-        except Exception as e:
+        except Exception:
             return None
 
     def _get_sector(self, code: str) -> str:
@@ -209,7 +209,7 @@ class StockAnalyzer:
                         results.append(result)
                     else:
                         failed += 1
-                except Exception as e:
+                except Exception:
                     failed += 1
 
                 # 进度显示

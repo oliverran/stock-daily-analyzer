@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from typing import Dict, List, Optional
 import yfinance as yf
 import akshare as ak
@@ -17,8 +18,6 @@ def _clean_env(v: Optional[str]) -> Optional[str]:
         v = v[1:-1]
     return v.strip()
 
-
-import logging
 
 # 获取 logger
 logger = logging.getLogger(__name__)

@@ -10,7 +10,6 @@ Stock Daily Analyzer - Main Entry Point
 4. 通过macOS系统通知提醒用户
 """
 import sys
-from datetime import date
 from pathlib import Path
 
 # 确保可以导入本地模块
@@ -19,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from database import init_database, save_recommendations, get_overall_accuracy
 from analyzer import run_daily_analysis
 from backtester import run_backtest
+from config import BACKTEST_DAYS
 from notifier import send_analysis_complete_notification, send_error_notification
 from llm import llm_enabled, select_top_picks
 from log_setup import setup_logging

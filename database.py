@@ -2,8 +2,8 @@
 Stock Daily Analyzer - Database Module
 """
 import sqlite3
-from datetime import datetime, date
-from typing import List, Dict, Optional, Tuple
+from datetime import date
+from typing import List, Dict, Optional
 from contextlib import contextmanager
 
 from config import DB_PATH
