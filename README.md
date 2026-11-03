@@ -1,204 +1,184 @@
 # A股每日分析助手
 
-这是一个自动化的A股市场分析工具，旨在每日收盘后协助投资者快速筛选潜在机会。它结合了传统量化技术指标（RSI, MACD, 均线系统, 量比）与现代大语言模型（LLM）的语义分析能力，提供智能化的选股建议。
+用 Python 扫描 A 股技术信号、生成研究日报，并通过独立的量化框架运行日频回测。LLM 新闻分析与候选股解读是可选功能。
 
-## 主要功能
+**先运行离线演示，再接入真实数据。** 演示使用固定的虚构价格，无需 API Key；安装依赖后，运行演示不需要联网。
 
-1.  **全市场扫描**: 每日自动扫描 A 股市场（支持排除创业板/ST股），基于量化规则筛选股票。
-    *   **放量突破**: 寻找成交量显著放大且价格突破的股票。
-    *   **趋势向好**: 筛选均线多头排列、MACD 金叉的稳健标的。
-    *   **超卖反弹**: 捕捉 RSI 超卖且有企稳迹象的反弹机会。
-2.  **LLM 智能精选**: 集成火山方舟（Ark）大模型，对量化筛选出的候选股进行二次分析。
-    *   结合个股实时新闻（通过 akshare 获取）和基本面数据。
-    *   输出每种策略下"最值得买"的一只股票及推荐理由。
-3.  **历史回测**: 每日运行前自动验证 3 天前的推荐结果，统计准确率和收益率。
-4.  **自动化报告**: 生成包含回测结果、今日推荐、LLM 精选理由的日报，并支持保存为文本文件。
-5.  **系统通知**: 分析完成后通过 macOS 系统通知发送摘要（支持点击打开报告）。
+A-share daily research and backtesting in Python. Start with `stock-analyzer demo`: synthetic data, no API key, no market-data requests.
 
-## 量化框架（qf）
+[快速开始](#快速开始) · [离线演示输出](#离线演示会生成什么) · [真实数据与日报](#接入真实数据) · [贡献指南](CONTRIBUTING.md) · [版本记录](CHANGELOG.md)
 
-项目内置一个可复现实验的量化研究框架（仅A股、日频数据、周频调仓），支持：
+> 仅供学习和研究，不构成投资建议。演示结果来自合成数据，不能代表策略在真实市场的表现。项目不提供自动下单功能。
 
-- 数据源接口与本地缓存（便于替换数据源、提升回测速度）
-- 因子计算 → 截面打分 → 组合构建（TopK 等权 + 单票上限）
-- 可交易性约束（停牌、涨跌停、T+1）与税费/滑点/佣金成本
-- 回测结果落盘（equity/holdings/summary），便于复现实验与对比
+## 可以做什么
 
-## 技术栈
+- **每日扫描**：按放量突破、趋势向好、超卖反弹等规则筛选候选股，生成文本日报并保存历史记录到 SQLite。
+- **可选 LLM 分析**：通过火山方舟或兼容接口，结合新闻、基本面和历史异动信息生成候选股解读。需要自行配置服务凭据，可能产生 API 费用。
+- **历史推荐回顾**：检查此前记录的推荐结果，与独立的组合回测功能区分开来。
+- **量化研究框架 `qf`**：因子计算 → 截面打分 → TopK 等权组合 → 周频调仓 → 导出净值、持仓和指标。
+- **本地运行与部署**：提供 CLI、部署脚本和 Docker 配置。macOS 支持系统通知，其他平台记录通知日志。
 
-*   **语言**: Python 3.9+
-*   **数据源**: 
-    *   `akshare`: 获取 A 股实时行情、个股新闻。
-    *   `yfinance`: 获取个股基本面数据（市值、PE等）。
-*   **LLM**: 火山引擎 (Volcengine Ark) / 兼容 OpenAI 接口。
-*   **存储**: SQLite (本地存储历史推荐与价格数据)。
+## 快速开始
 
-## 版本历史
+需要 Git 和 Python 3.9+。首次安装需要联网下载依赖。
 
-### v1.1.0 (2026-01-07)
-*   **智能新闻筛选**: 引入 LLM 对个股新闻进行时效性、相关性和重要性评分，自动筛选 Top 3 关键信息，告别海量噪音。
-*   **历史异动归因**: 新增股价历史异动检测模块，支持短期（10天滑动窗口）和长期（90天振幅）两种模式。
-    *   自动识别并标注股价的快速拉升/下跌区间（只保留最近5条记录以优化上下文）。
-    *   利用 LLM 结合同期新闻，从宏观、行业、个股三个维度生成深度归因报告。
-*   **决策上下文增强**: 
-    *   将历史归因总结和精选新闻作为核心上下文输入给选股模型。
-    *   优化 Prompt 指令，强制要求 LLM 综合量化信号、异动归因、市场情绪三个维度进行决策，显著提升推荐理由的逻辑深度。
-*   **数据源优化**: 全面适配 akshare 新版接口，提升 A 股数据获取稳定性。
-
-## 安装与配置
-
-### 作为 Python 包安装（推荐）
+### macOS / Linux
 
 ```bash
-pip install -e .
+git clone https://github.com/oliverran/stock-daily-analyzer.git
+cd stock-daily-analyzer
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+stock-analyzer demo
 ```
 
-开发与测试环境：
+### Windows PowerShell
 
-```bash
-pip install -e ".[dev]"
-ruff check .
-pytest -q
-```
-
-1.  **克隆仓库**
-    ```bash
-    git clone https://github.com/oliverran/stock-daily-analyzer.git
-    cd stock-daily-analyzer
-    ```
-
-2.  **安装依赖**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **配置环境变量**
-    复制 `.env.example` 为 `.env` 并填入你的 API Key：
-    ```ini
-    ARK_API_KEY=your_api_key_here
-    ARK_MODEL_ID=your_model_endpoint_id
-    ```
-
-## 使用方法
-
-### 本地运行
-
-#### Windows（推荐使用虚拟环境）
+以下命令直接使用虚拟环境中的程序，无需修改 PowerShell 执行策略：
 
 ```powershell
+git clone https://github.com/oliverran/stock-daily-analyzer.git
+cd stock-daily-analyzer
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-copy .env.example .env
-python self_check.py
-python main.py
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\stock-analyzer.exe demo
 ```
 
-运行主程序进行全流程分析：
+无需复制 `.env`，也无需配置 LLM。完成后会看到：
+
+```text
+Synthetic data only. Not historical market data or investment advice.
+Offline demo complete: 3 fictional symbols, 60 weekday observations.
+reports/demo/equity.csv
+reports/demo/holdings.csv
+reports/demo/summary.json
+```
+
+Windows 输出的路径分隔符可能为 `\`。后续命令若提示找不到 `stock-analyzer`，请先激活虚拟环境，或继续使用 `.\.venv\Scripts\stock-analyzer.exe`。
+
+## 离线演示会生成什么
+
+演示调用项目现有的 `DailyBacktester`，使用 `DEMO_A`、`DEMO_B`、`DEMO_C` 三个虚构标的的 60 条工作日数据。价格公式固定，不访问行情、新闻或 LLM 服务，也不写入日报数据库。
+
+- `equity.csv`：按日期记录的模拟净值。
+- `holdings.csv`：每日组合权重，`__CASH__` 表示现金。因子历史不足时保持现金。
+- `summary.json`：明确标注合成数据来源，记录参数、总收益、年化收益、Sharpe 和最大回撤。
+
+默认输出到 `reports/demo/`。可以用表格软件打开 CSV，或指定新目录保留不同结果：
 
 ```bash
-python main.py
+stock-analyzer demo --out reports/my-demo
 ```
 
-或者仅测试 LLM 选股功能：
+重复运行会覆盖所选目录内的同名演示文件。演示使用普通工作日而非交易所日历；价格、费用和交易约束均为示例设置，指标只用于理解输出格式。
+
+## 接入真实数据
+
+离线演示通过后，再根据需要选择下面的功能。两者均依赖外部数据服务，可能遇到超时、限流或数据缺失。`self-check` 只检查模块能否导入，**不验证 API 凭据或行情可用性**。
 
 ```bash
-python test_llm.py
+stock-analyzer self-check
+stock-analyzer --help
 ```
 
-### 量化框架回测（仅A股、日频）
-
-使用可复现实验配置运行回测：
+### 1. 日报扫描
 
 ```bash
-python run_experiment.py --config experiments/default_a_share_daily.json
+stock-analyzer run-daily
 ```
 
-或使用安装后的 CLI：
+默认使用 AkShare / yfinance 获取行情。未设置 LLM 凭据时会跳过 LLM 分析，仍可运行量化筛选。输出包括：
+
+- `reports/report_YYYY-MM-DD.txt`：日报。
+- `stock_analysis.db`：本地历史记录。
+- `logs/`：运行日志。
+
+以上路径位于源码目录。默认筛选规则见 [`config.py`](config.py) 和 [`strategies.py`](strategies.py)。首次运行没有历史推荐可验证是正常情况；完整市场扫描的耗时取决于数据服务响应。
+
+**可选：启用 LLM**
+
+复制 `.env.example` 为 `.env`，将占位值替换为你自己的凭据：
+
+```ini
+ARK_API_KEY=your_api_key_here
+ARK_MODEL_ID=your_model_endpoint_id
+ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/v3/chat/completions
+LLM_DEBUG=0
+```
+
+`ARK_MODEL_ID` 应填写你的服务可用的模型 / 推理接入点 ID。`ARK_BASE_URL` 是完整的 chat completions 地址。仅复制示例而不替换占位值会触发无效的 LLM 请求；不需要 LLM 时不要设置这些凭据。
+
+`.env` 已被 Git 忽略。不要在 Issue、日志片段或提交中粘贴 API Key。使用其他兼容服务时需自行验证接口兼容性。
+
+### 2. 组合回测
+
+检查并调整 [`experiments/default_a_share_daily.json`](experiments/default_a_share_daily.json) 中的日期范围和股票池，再运行：
 
 ```bash
 stock-analyzer backtest --config experiments/default_a_share_daily.json
 ```
 
-回测输出目录（默认）：
-
-- `reports/experiments/<experiment_name>/equity.csv`
-- `reports/experiments/<experiment_name>/holdings.csv`
-- `reports/experiments/<experiment_name>/summary.json`
-
-实验配置说明（见 `experiments/*.json`）：
-
-- `universe`：股票池过滤（可选 include_prefix、exclude_prefix、exclude_st、max_stocks）
-- `data`：数据源与缓存（provider、cache_dir、timeout_seconds）
-- `factors`：lookback 与因子权重（weights）
-- `portfolio`：TopK、单票上限（max_weight_per_name）
-- `trading`：可交易性与税费（t_plus_one、limit_up/limit_down、stamp_duty_bps 等）
-- `backtest`：回测区间、调仓规则（rebalance=W/W-FRI/M）、成本与初始资金
-
-自检与日报运行：
+也支持原有脚本入口：
 
 ```bash
-stock-analyzer self-check
-stock-analyzer run-daily
+python run_experiment.py --config experiments/default_a_share_daily.json
 ```
 
-### 服务器部署
+输出位于 `reports/experiments/<experiment_name>/`，包含 `equity.csv`、`holdings.csv` 和 `summary.json`。关键参数：
 
-**🚀 一键部署（推荐）**
+- `universe`：股票代码前缀、ST 过滤、股票数量上限。
+- `data`：行情提供方、缓存目录、请求超时。
+- `factors`：回看窗口与因子权重。
+- `portfolio`：TopK 数量、单票权重上限。
+- `trading`：简化的停牌、涨跌停、T+1 和印花税假设。
+- `backtest`：日期区间、调仓频率、佣金、滑点、初始资金。
+
+**研究边界**：在线实验使用运行时取得的股票池，不是历史时点股票池，存在幸存者偏差风险。交易约束和成本模型是简化实现，不应直接用于推断实盘收益；需要自行检查数据完整性、复权方式、成交假设及适用市场规则。离线演示也不能验证在线行情或 LLM 服务。
+
+## 常见问题
+
+- **找不到 `stock-analyzer`**：确认已在项目目录执行 `python -m pip install -e .`，且正在使用对应的虚拟环境。也可运行 `python -m qf.cli demo`。
+- **`IMPORT_OK`，但在线运行失败**：自检只验证导入。先查看 `logs/`，检查网络、数据源响应及凭据；用 `stock-analyzer demo` 区分本地安装问题和外部服务问题。
+- **日报没有候选股 / 没有历史回顾**：可能是筛选条件未命中、数据缺失或尚无历史记录，请结合日志判断，空结果不等于成功验证了全部数据源。
+- **没有桌面通知**：非 macOS 平台会记录通知日志，不弹出系统通知。
+
+## 开发与贡献
+
+在已激活的虚拟环境中运行：
 
 ```bash
-# 上传项目到服务器
-scp -r stock-daily-analyzer user@your-server:/home/user/
-
-# SSH登录并部署
-ssh user@your-server
-cd /home/user/stock-daily-analyzer
-./deploy/deploy.sh
+python -m pip install -e ".[dev]"
+ruff check .
+pytest -q
 ```
 
-**🐳 Docker部署**
+测试与演示不需要真实市场请求或 API Key。贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题见 [SECURITY.md](SECURITY.md)。反馈运行问题时，请附上操作系统、Python 版本、执行命令和去除敏感信息后的错误信息。
 
-```bash
-cd deploy/docker
-./run.sh
+如果这个项目对你的研究有帮助，欢迎点 Star，或分享你复现时发现的问题。请勿将合成演示指标当作真实业绩传播。
+
+## 部署与项目结构
+
+先在本地验证所需的在线流程，再配置定时运行：
+
+- [快速部署指南](QUICK_DEPLOY.md)
+- [完整部署文档](DEPLOYMENT.md)
+- [`deploy/`](deploy/)：systemd、Supervisor、Docker 和定时任务示例。
+
+主要代码：
+
+```text
+qf/                 因子、打分、组合、回测、离线演示和 CLI
+experiments/        在线实验配置
+tests/             单元测试与离线冒烟测试
+analyzer.py         日报量化筛选
+llm.py              可选 LLM 分析
+attribution.py      历史异动检测与归因
+backtester.py       历史推荐回顾
+reporting.py        日报生成
+config.py           日报参数
 ```
 
-**📚 详细部署文档**
+## 许可证
 
-- [快速部署指南](./QUICK_DEPLOY.md) - 3种部署方式快速入门
-- [完整部署文档](./DEPLOYMENT.md) - 详细的部署、配置、监控指南
-
-## 目录结构
-
-```
-stock-daily-analyzer/
-├── qf/                      # 可复现实验量化框架（数据/因子/回测/交易约束/CLI）
-├── experiments/             # 实验配置样例（JSON）
-├── tests/                   # 单元测试与冒烟测试（离线可跑）
-├── analyzer.py              # 日报：量化筛选逻辑
-├── llm.py                   # 日报：LLM二次分析（可选）
-├── attribution.py           # 日报：历史异动归因（可选）
-├── backtester.py            # 日报：历史推荐回测统计
-├── database.py              # 日报：SQLite存储
-├── notifier.py              # 通知（macOS可用，其他平台安全降级）
-├── config.py                # 日报配置
-├── main.py                  # 日报入口
-├── run_experiment.py        # 量化框架：回测入口（兼容 CLI）
-├── pyproject.toml           # 打包/依赖/CLI/CI配置
-├── .env.example             # 环境变量示例
-├── deploy/                 # 部署配置目录
-│   ├── deploy.sh           # 一键部署脚本
-│   ├── crontab.example     # 定时任务示例
-│   ├── stock-analyzer.service  # systemd服务配置
-│   ├── docker/             # Docker部署配置
-│   │   ├── Dockerfile
-│   │   ├── docker-compose.yml
-│   │   └── run.sh
-│   └── supervisor/         # Supervisor配置
-├── logs/                   # 运行日志
-└── reports/                # 每日生成的分析报告
-```
-
-## 免责声明
-
-本项目仅供学习和研究使用，不构成任何投资建议。股市有风险，入市需谨慎。
+[MIT](LICENSE)。本项目仅供学习和研究使用，不构成任何投资建议。
