@@ -6,13 +6,15 @@
 
 A-share daily research and backtesting in Python. Start with `stock-analyzer demo`: synthetic data, no API key, no market-data requests.
 
-[快速开始](#快速开始) · [离线演示输出](#离线演示会生成什么) · [真实数据与日报](#接入真实数据) · [贡献指南](CONTRIBUTING.md) · [版本记录](CHANGELOG.md)
+[直接查看演示，无需安装](docs/demo/README.md) · [快速开始](#快速开始) · [离线演示输出](#离线演示会生成什么) · [真实数据与日报](#接入真实数据) · [贡献指南](CONTRIBUTING.md) · [版本记录](CHANGELOG.md)
 
 > 仅供学习和研究，不构成投资建议。演示结果来自合成数据，不能代表策略在真实市场的表现。项目不提供自动下单功能。
 
 ## 先看看输出，无需安装
 
-![由离线回测引擎实际生成的合成数据净值曲线；不是历史市场业绩](docs/demo/equity.svg)
+[![由离线回测引擎实际生成的合成数据净值曲线；不是历史市场业绩](docs/demo/equity.svg)](docs/demo/README.md)
+
+**[在 GitHub 直接查看演示摘要 →](docs/demo/README.md)** 包含净值图、模拟指标、持仓和数据文件，不需要下载或安装。所有数值均来自下方离线演示的实际运行，使用虚构价格，不是真实市场业绩。
 
 仓库包含[完整演示输出](docs/demo/)。克隆或下载仓库后，直接用浏览器打开 `docs/demo/report.html`，不需要 Python、API Key 或网络连接。页面包含模拟指标、组合权重、完整净值表和参数；图表与 CSV 来自同一次真实执行。
 
@@ -166,7 +168,7 @@ ruff check .
 pytest -q
 ```
 
-修改演示后，运行 `python scripts/update_demo_preview.py` 重新生成仓库内的预览文件。测试会检查预览与当前代码是否一致。
+修改演示后，运行 `python scripts/update_demo_preview.py` 重新生成仓库内的预览文件和 GitHub 可直接阅读的演示摘要。测试会检查预览与当前代码是否一致。
 
 测试与演示不需要真实市场请求或 API Key。贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题见 [SECURITY.md](SECURITY.md)。反馈运行问题时，请附上操作系统、Python 版本、执行命令和去除敏感信息后的错误信息。
 

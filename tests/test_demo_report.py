@@ -41,6 +41,9 @@ def test_report_is_self_contained_and_matches_outputs(tmp_path):
     ]
     assert "Content-Security-Policy" in html
     assert "default-src 'none'" in html
+    assert '<meta name="description"' in html
+    assert '<title>合成数据研究演示 | Stock Daily Analyzer</title>' in html
+    assert 'content="Synthetic data only:' in html
     assert "Not historical market data or investment advice" in html
     for value in equity:
         assert f"{value:,.2f}" in html
