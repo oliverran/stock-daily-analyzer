@@ -10,6 +10,14 @@ A-share daily research and backtesting in Python. Start with `stock-analyzer dem
 
 > 仅供学习和研究，不构成投资建议。演示结果来自合成数据，不能代表策略在真实市场的表现。项目不提供自动下单功能。
 
+## 先看看输出，无需安装
+
+![由离线回测引擎实际生成的合成数据净值曲线；不是历史市场业绩](docs/demo/equity.svg)
+
+仓库包含[完整演示输出](docs/demo/)。克隆或下载仓库后，直接用浏览器打开 `docs/demo/report.html`，不需要 Python、API Key 或网络连接。页面包含模拟指标、组合权重、完整净值表和参数；图表与 CSV 来自同一次真实执行。
+
+GitHub 文件页显示 HTML 源码，不会运行报告。请将整个 `docs/demo/` 目录保存到本地后打开报告，以保留 CSV / JSON 链接。预览只使用虚构数据，不能代表真实市场表现。
+
 ## 可以做什么
 
 - **每日扫描**：按放量突破、趋势向好、超卖反弹等规则筛选候选股，生成文本日报并保存历史记录到 SQLite。
@@ -53,6 +61,9 @@ Offline demo complete: 3 fictional symbols, 60 weekday observations.
 reports/demo/equity.csv
 reports/demo/holdings.csv
 reports/demo/summary.json
+reports/demo/equity.svg
+reports/demo/report.html
+Open report.html in your browser to view the synthetic results.
 ```
 
 Windows 输出的路径分隔符可能为 `\`。后续命令若提示找不到 `stock-analyzer`，请先激活虚拟环境，或继续使用 `.\.venv\Scripts\stock-analyzer.exe`。
@@ -61,11 +72,13 @@ Windows 输出的路径分隔符可能为 `\`。后续命令若提示找不到 `
 
 演示调用项目现有的 `DailyBacktester`，使用 `DEMO_A`、`DEMO_B`、`DEMO_C` 三个虚构标的的 60 条工作日数据。价格公式固定，不访问行情、新闻或 LLM 服务，也不写入日报数据库。
 
+- `report.html`：可直接在浏览器打开的完整可视化报告，无脚本、外部字体或 CDN。
+- `equity.svg`：可单独查看或嵌入文档的净值图表，包含合成数据标签。
 - `equity.csv`：按日期记录的模拟净值。
 - `holdings.csv`：每日组合权重，`__CASH__` 表示现金。因子历史不足时保持现金。
 - `summary.json`：明确标注合成数据来源，记录参数、总收益、年化收益、Sharpe 和最大回撤。
 
-默认输出到 `reports/demo/`。可以用表格软件打开 CSV，或指定新目录保留不同结果：
+默认输出到 `reports/demo/`。用浏览器打开其中的 `report.html`，或用表格软件打开 CSV；也可指定新目录保留不同结果：
 
 ```bash
 stock-analyzer demo --out reports/my-demo
@@ -152,6 +165,8 @@ python -m pip install -e ".[dev]"
 ruff check .
 pytest -q
 ```
+
+修改演示后，运行 `python scripts/update_demo_preview.py` 重新生成仓库内的预览文件。测试会检查预览与当前代码是否一致。
 
 测试与演示不需要真实市场请求或 API Key。贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题见 [SECURITY.md](SECURITY.md)。反馈运行问题时，请附上操作系统、Python 版本、执行命令和去除敏感信息后的错误信息。
 

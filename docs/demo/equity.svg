@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="chart-title chart-description">
+<title id="chart-title">Synthetic demo equity | 合成数据演示净值</title>
+<desc id="chart-description">60 weekday observations, 2024-01-02 to 2024-03-25. Starting value 100,000.00; final value 100,440.92. Fictional prices, not historical market performance. Full data in equity.csv.</desc>
+<rect width="960" height="440" rx="16" fill="#f8fafc"/>
+<g font-family="system-ui, sans-serif">
+<text x="36" y="40" font-size="22" font-weight="700" fill="#13283f">Synthetic demo equity</text>
+<text x="36" y="67" font-size="15" fill="#8a4110">FICTIONAL DATA · Not historical performance or investment advice</text>
+<text x="100" y="97" font-size="13" fill="#526075">Simulation units · y-axis zoomed to observed range</text>
+<line x1="100" x2="920" y1="112.0" y2="112.0" stroke="#dbe4ec"/><text x="86" y="117.0" text-anchor="end" fill="#526075" font-size="14">102,106</text><line x1="100" x2="920" y1="170.5" y2="170.5" stroke="#dbe4ec"/><text x="86" y="175.5" text-anchor="end" fill="#526075" font-size="14">101,209</text><line x1="100" x2="920" y1="229.0" y2="229.0" stroke="#dbe4ec"/><text x="86" y="234.0" text-anchor="end" fill="#526075" font-size="14">100,312</text><line x1="100" x2="920" y1="287.5" y2="287.5" stroke="#dbe4ec"/><text x="86" y="292.5" text-anchor="end" fill="#526075" font-size="14">99,415</text><line x1="100" x2="920" y1="346.0" y2="346.0" stroke="#dbe4ec"/><text x="86" y="351.0" text-anchor="end" fill="#526075" font-size="14">98,518</text>
+<polyline data-series="equity" points="100.00,249.36 113.90,249.36 127.80,249.36 141.69,249.36 155.59,249.36 169.49,249.36 183.39,249.36 197.29,249.36 211.19,249.36 225.08,249.36 238.98,249.36 252.88,249.36 266.78,249.36 280.68,249.36 294.58,249.36 308.47,249.36 322.37,249.36 336.27,249.36 350.17,249.36 364.07,249.36 377.97,249.36 391.86,249.36 405.76,249.36 419.66,251.31 433.56,319.00 447.46,293.29 461.36,267.57 475.25,241.86 489.15,216.14 503.05,190.43 516.95,164.71 530.85,139.00 544.75,232.10 558.64,206.37 572.54,180.64 586.44,154.91 600.34,222.37 614.24,196.64 628.14,176.20 642.03,157.55 655.93,221.52 669.83,202.96 683.73,184.41 697.63,171.15 711.53,262.82 725.42,237.57 739.32,212.32 753.22,187.08 767.12,258.24 781.02,239.90 794.92,221.56 808.81,203.23 822.71,267.20 836.61,254.18 850.51,229.42 864.41,204.67 878.31,294.91 892.20,270.14 906.10,245.37 920.00,220.60" fill="none" stroke="#077d86" stroke-width="3" stroke-linejoin="round"/>
+<text x="100" y="377" font-size="14" fill="#526075">2024-01-02</text>
+<text x="920" y="377" text-anchor="end" font-size="14" fill="#526075">2024-03-25</text>
+<text x="36" y="414" font-size="14" fill="#526075">60 weekday observations · Fixed synthetic prices · No API key or market-data requests</text>
+</g>
+</svg>

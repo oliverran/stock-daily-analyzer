@@ -1,0 +1,42 @@
+{
+  "demo": true,
+  "data_source": "deterministic_synthetic",
+  "warning": "Synthetic data only. Not historical market data or investment advice.",
+  "calendar": "Weekdays only; not an exchange trading calendar.",
+  "observations": 60,
+  "symbols": [
+    "DEMO_A",
+    "DEMO_B",
+    "DEMO_C"
+  ],
+  "config": {
+    "start": "2024-01-02",
+    "end": "2024-03-25",
+    "rebalance": "W-FRI",
+    "initial_cash": 100000.0,
+    "timeout_seconds": 1,
+    "lookback_days": 20,
+    "factor_weights": {
+      "momentum": 1.0
+    },
+    "top_k": 2,
+    "max_weight_per_name": 0.5,
+    "commission_bps": 1.0,
+    "slippage_bps": 2.0,
+    "max_drawdown_halt": null,
+    "trading": {
+      "t_plus_one": true,
+      "limit_up": 0.099,
+      "limit_down": -0.099,
+      "stamp_duty_bps": 10.0,
+      "allow_buy_limit_up": false,
+      "allow_sell_limit_down": false
+    }
+  },
+  "metrics": {
+    "total_return": 0.004409181991069877,
+    "cagr": 0.018649630094423886,
+    "sharpe": 0.27385126510079066,
+    "max_drawdown": -0.02350894036067619
+  }
+}
