@@ -11,6 +11,7 @@ import pandas as pd
 
 from qf.backtest import DailyBacktester
 from qf.data import PriceFrame, PriceProvider
+from qf.demo_report import write_demo_report
 from qf.trading import TradingRules
 from qf.universe import Stock
 
@@ -87,4 +88,5 @@ def run_demo(out_dir: Path) -> Path:
     }
     summary_path = out_dir / "summary.json"
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    write_demo_report(out_dir, result.equity, result.holdings, summary)
     return summary_path

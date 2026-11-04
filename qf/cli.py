@@ -24,8 +24,9 @@ def main() -> int:
         summary_path = run_demo(Path(args.out))
         print(DEMO_WARNING)
         print("Offline demo complete: 3 fictional symbols, 60 weekday observations.")
-        for name in ("equity.csv", "holdings.csv", "summary.json"):
+        for name in ("equity.csv", "holdings.csv", "summary.json", "equity.svg", "report.html"):
             print(str(summary_path.parent / name))
+        print("Open report.html in your browser to view the synthetic results.")
         return 0
     if args.cmd == "backtest":
         from qf.experiment import run_experiment

@@ -49,7 +49,7 @@ def test_demo_writes_labelled_outputs_and_holds_fictional_symbols(tmp_path):
 def test_demo_is_repeatable(tmp_path):
     first = run_demo(tmp_path / "first").parent
     second = run_demo(tmp_path / "second").parent
-    for name in ("equity.csv", "holdings.csv", "summary.json"):
+    for name in ("equity.csv", "holdings.csv", "summary.json", "equity.svg", "report.html"):
         assert (first / name).read_bytes() == (second / name).read_bytes()
     before = (first / "summary.json").read_bytes()
     run_demo(first)
@@ -69,6 +69,8 @@ def test_demo_cli_without_credentials(tmp_path, monkeypatch, capsys, custom_out)
     assert "Synthetic data only" in output
     assert "3 fictional symbols, 60 weekday observations" in output
     assert (out / "summary.json").is_file()
+    assert (out / "report.html").is_file()
+    assert "Open report.html" in output
 
 
 def test_synthetic_provider_honors_dates_and_does_not_expose_mutable_data():
