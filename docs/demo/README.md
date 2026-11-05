@@ -1,5 +1,7 @@
 # 合成数据演示：先看结果，再决定是否安装
 
+[中文](README.md) | [English](README.en.md)
+
 **这是虚构价格的模拟输出，不是真实市场业绩，不构成投资建议。**
 
 本页可直接在 GitHub 阅读，无需 Python、API Key 或下载。图表、指标和持仓来自同一次 `stock-analyzer demo` 执行，使用项目的 `DailyBacktester`，不是手写展示数字。
