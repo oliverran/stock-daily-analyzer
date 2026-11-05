@@ -9,7 +9,7 @@ from qf.demo import run_demo
 
 
 def update_preview(destination: Path) -> None:
-    """Keep the Markdown entry point derived from the actual demo outputs."""
+    """Keep both Markdown entry points derived from the actual demo outputs."""
     summary_path = run_demo(destination)
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     equity = pd.read_csv(destination / "equity.csv", index_col="Date")["equity"]
@@ -17,6 +17,8 @@ def update_preview(destination: Path) -> None:
     metrics = summary["metrics"]
     weights = "\n".join(f"| `{symbol}` | {weight:.2%} |" for symbol, weight in holdings.iloc[-1].items())
     readme = f'''# 合成数据演示：先看结果，再决定是否安装
+
+[中文](README.md) | [English](README.en.md)
 
 **这是虚构价格的模拟输出，不是真实市场业绩，不构成投资建议。**
 
@@ -73,6 +75,65 @@ stock-analyzer demo
 如果输出形式对你的研究有帮助，欢迎在[项目主页](https://github.com/oliverran/stock-daily-analyzer)点 Star。请勿将合成演示指标当作真实业绩传播。
 '''
     (destination / "README.md").write_text(readme, encoding="utf-8")
+    readme_en = f'''# Synthetic demo: inspect the results before installing
+
+[中文](README.md) | [English](README.en.md)
+
+**These are simulated results from fictional prices, not historical market performance or investment advice.**
+
+Read this page directly on GitHub without Python, an API key, or a download. The chart, metrics, and holdings come from the same `stock-analyzer demo` run using the project's `DailyBacktester`, not manually entered display numbers.
+
+![Synthetic equity curve, not historical market performance](equity.svg)
+
+## What this demo ran
+
+- Dates: {equity.index[0]} to {equity.index[-1]}, with {summary['observations']} weekday observations.
+- Fictional symbols: {', '.join(f'`{symbol}`' for symbol in summary['symbols'])}.
+- Simulated initial cash: {summary['config']['initial_cash']:,.2f}; final equity: {equity.iloc[-1]:,.2f}.
+- {summary['config']['lookback_days']}-day momentum factor, Top {summary['config']['top_k']} equal-weight portfolio, rebalance frequency `{summary['config']['rebalance']}`. The portfolio stays in cash until enough factor history is available.
+- Weekdays are not an exchange trading calendar. Commission, slippage, and trading constraints are example settings.
+
+## Simulated metrics: output-format examples only
+
+| Metric | This synthetic demo |
+| --- | ---: |
+| Simulated total return | {metrics['total_return']:.2%} |
+| Simulated maximum drawdown | {metrics['max_drawdown']:.2%} |
+| Simulated annualized return | {metrics['cagr']:.2%} |
+| Simulated Sharpe ratio | {metrics['sharpe']:.2f} |
+
+Annualized values and Sharpe ratios from a short synthetic sample do not represent achievable returns. See [summary.json](summary.json) for full precision and parameters.
+
+## Portfolio weights on the final day
+
+{holdings.index[-1]}; `__CASH__` means cash.
+
+| Symbol | Weight |
+| --- | ---: |
+{weights}
+
+## Inspect the data and full report
+
+- [Equity CSV](equity.csv): daily simulated equity, including all {summary['observations']} observations used in the chart.
+- [Holdings CSV](holdings.csv): daily portfolio weights.
+- [Parameters and metrics JSON](summary.json): synthetic-data provenance, settings, and metrics.
+- [Full report HTML source](report.html): GitHub shows source. Save all files in this directory locally, then open `report.html` in a browser to inspect the expandable parameters and full equity table.
+
+## Reproduce it yourself
+
+Follow the [quick start](../../README.en.md#quick-start), then run:
+
+```bash
+stock-analyzer demo
+```
+
+Open the generated `reports/demo/report.html`. The demo makes no market-data, news, or LLM requests; installing dependencies initially requires internet access. After changing the demo source, run `python scripts/update_demo_preview.py` to regenerate both language summaries and the data files.
+
+[Back to the project and real-data setup](../../README.en.md) · [Report a problem](https://github.com/oliverran/stock-daily-analyzer/issues)
+
+If the output is useful for your research, a Star on the [repository](https://github.com/oliverran/stock-daily-analyzer) is welcome. Do not present synthetic demo metrics as real market performance.
+'''
+    (destination / "README.en.md").write_text(readme_en, encoding="utf-8")
     print(f"Updated synthetic preview: {destination}")
 
 

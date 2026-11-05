@@ -1,5 +1,9 @@
 # A股每日分析助手
 
+[中文](README.md) | [English](README.en.md)
+
+[![CI](https://github.com/oliverran/stock-daily-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/oliverran/stock-daily-analyzer/actions/workflows/ci.yml)
+
 用 Python 扫描 A 股技术信号、生成研究日报，并通过独立的量化框架运行日频回测。LLM 新闻分析与候选股解读是可选功能。
 
 **先运行离线演示，再接入真实数据。** 演示使用固定的虚构价格，无需 API Key；安装依赖后，运行演示不需要联网。
