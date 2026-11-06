@@ -27,9 +27,8 @@ def build_equal_weight_portfolio(
     w = 1.0 / n
     w = min(w, max_weight_per_name)
     weights = {c: w for c in selected}
-    total = sum(weights.values())
-    if total > 0:
-        weights = {k: v / total for k, v in weights.items()}
+    # Keep a binding cap intact. The backtester fills the unallocated weight
+    # with cash via ensure_cash; normalizing here would undo the cap.
     return PortfolioSelection(weights=weights)
 
 
