@@ -28,6 +28,13 @@ jobs:
         run: |
           pytest -q
 
+      - name: Install notebook checks
+        if: matrix.python-version == '3.12'
+        run: python -m pip install -e ".[notebook]"
+      - name: Execute offline tutorial notebook
+        if: matrix.python-version == '3.12'
+        run: python scripts/check_demo_notebook.py --install
+
       - name: Install report browser checks
         if: matrix.python-version == '3.12'
         run: |
