@@ -10,7 +10,7 @@
 
 A-share daily research and backtesting in Python. Start with `stock-analyzer demo`: synthetic data, no API key, no market-data requests.
 
-[直接查看演示，无需安装](docs/demo/README.md) · [快速开始](#快速开始) · [离线演示输出](#离线演示会生成什么) · [真实数据与日报](#接入真实数据) · [贡献指南](CONTRIBUTING.md) · [版本记录](CHANGELOG.md)
+[直接查看演示，无需安装](docs/demo/README.md) · [查看日报样例](docs/daily-demo/README.md) · [快速开始](#快速开始) · [离线演示输出](#离线演示会生成什么) · [真实数据与日报](#接入真实数据) · [贡献指南](CONTRIBUTING.md) · [版本记录](CHANGELOG.md)
 
 > 仅供学习和研究，不构成投资建议。演示结果来自合成数据，不能代表策略在真实市场的表现。项目不提供自动下单功能。
 
@@ -23,6 +23,12 @@ A-share daily research and backtesting in Python. Start with `stock-analyzer dem
 仓库包含[完整演示输出](docs/demo/)。克隆或下载仓库后，直接用浏览器打开 `docs/demo/report.html`，不需要 Python、API Key 或网络连接。页面包含模拟指标、组合权重、完整净值表和参数；图表与 CSV 来自同一次真实执行。
 
 GitHub 文件页显示 HTML 源码，不会运行报告。请将整个 `docs/demo/` 目录保存到本地后打开报告，以保留 CSV / JSON 链接。预览只使用虚构数据，不能代表真实市场表现。
+
+### 也看看研究日报
+
+**[直接阅读日报样例 →](docs/daily-demo/README.md)** 4 个虚构标的经过现有技术指标、筛选规则和日报生成器实际执行，展示超卖反弹、趋势向好、放量突破分类。固定样本日期为 2024-04-19，附完整输入与计算结果；没有编造历史准确率、收益或 LLM 解读。这与上面的组合回测是两个独立流程。
+
+安装后运行 `stock-analyzer demo-daily`，即可在 `reports/daily-demo/daily-report.txt` 查看同一份离线日报。无需 API Key，不请求行情，不写日报数据库；用 `--out` 指定其他输出目录。完整复现说明见[日报样例](docs/daily-demo/README.md)。
 
 ## 可以做什么
 
@@ -180,7 +186,7 @@ ruff check .
 pytest -q
 ```
 
-修改演示后，运行 `python scripts/update_demo_preview.py` 重新生成仓库内的预览文件和 GitHub 可直接阅读的演示摘要。测试会检查预览与当前代码是否一致。
+修改日报样例后，运行 `python scripts/update_daily_preview.py`。修改回测演示后，运行 `python scripts/update_demo_preview.py` 重新生成仓库内的预览文件和 GitHub 可直接阅读的演示摘要。测试会检查预览与当前代码是否一致。
 
 测试与演示不需要真实市场请求或 API Key。贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题见 [SECURITY.md](SECURITY.md)。反馈运行问题时，请附上操作系统、Python 版本、执行命令和去除敏感信息后的错误信息。
 
