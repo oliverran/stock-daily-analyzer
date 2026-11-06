@@ -19,6 +19,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+notebook = [
+  "ipykernel>=6.0.0",
+  "nbclient>=0.8.0",
+  "nbformat>=5.9.0",
+]
 dev = [
   "pytest>=7.0.0",
   "ruff>=0.6.0",

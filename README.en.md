@@ -30,6 +30,14 @@ For the full visual report, clone or download the repository and open `docs/demo
 
 The live workflows focus on Chinese A-shares. Translating this guide does not change the market universe or localize all report text and logs.
 
+## Try it in your browser
+
+[**Open the runnable notebook in Google Colab →**](https://colab.research.google.com/github/oliverran/stock-daily-analyzer/blob/main/notebooks/offline_demo.ipynb)
+
+Run the actual synthetic backtest, inspect weights, compare TopK settings, and download the results without installing Python locally. Review the cells and choose **Runtime → Run all** using a standard CPU runtime. Google sign-in and an available runtime may be required; the first cell downloads the pinned project revision and dependencies. No API key, paid runtime, or Drive mount is needed. The notebook includes Chinese and English instructions.
+
+The project revision is fixed for this tutorial; dependency versions are resolved during installation. All prices are fictional, and the comparison is not evidence of a profitable strategy. [View the notebook source](notebooks/offline_demo.ipynb) before running it. If Colab is unavailable, use the local instructions below or the [installation-free preview](docs/demo/README.en.md).
+
 ## Quick start
 
 You need Git and **Python 3.9 or newer**. The first installation requires internet access.

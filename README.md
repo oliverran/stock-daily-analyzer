@@ -32,6 +32,14 @@ GitHub 文件页显示 HTML 源码，不会运行报告。请将整个 `docs/dem
 - **量化研究框架 `qf`**：因子计算 → 截面打分 → TopK 等权组合 → 周频调仓 → 导出净值、持仓和指标。
 - **本地运行与部署**：提供 CLI、部署脚本和 Docker 配置。macOS 支持系统通知，其他平台记录通知日志。
 
+## 在浏览器里亲手试用
+
+[**在 Google Colab 打开可运行的 Notebook →**](https://colab.research.google.com/github/oliverran/stock-daily-analyzer/blob/main/notebooks/offline_demo.ipynb)
+
+无需在本地安装 Python，即可运行实际的合成数据回测、查看权重、比较 TopK 参数并下载结果。先检查代码，再选择普通 CPU 运行时并点击 **代码执行程序 → 全部运行**。可能需要 Google 登录和可用的运行时；第一个单元会联网安装固定项目版本及依赖。不需要 API Key、付费运行时或挂载网盘。Notebook 包含中英文说明。
+
+教程固定项目代码版本，依赖版本在安装时解析。所有价格均为虚构，参数对比不能证明策略盈利。[可先查看 Notebook 源码](notebooks/offline_demo.ipynb)。如果无法访问 Colab，可使用下方本地安装流程，或直接看[免安装预览](docs/demo/README.md)。
+
 ## 快速开始
 
 需要 Git 和 Python 3.9+。首次安装需要联网下载依赖。
