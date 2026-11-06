@@ -1,0 +1,288 @@
+{
+  "demo": true,
+  "data_source": "deterministic_synthetic",
+  "warning": "SYNTHETIC DAILY REPORT / 合成数据日报示例。Not live market data or investment advice. 不是实时行情、真实荐股或收益记录。",
+  "source_file": "qf/daily_demo.py",
+  "report_date": "2024-04-19",
+  "input_start": "2024-01-01",
+  "input_end": "2024-04-19",
+  "observations_per_symbol": 80,
+  "symbols": [
+    "DEMO_A",
+    "DEMO_B",
+    "DEMO_C",
+    "DEMO_D"
+  ],
+  "input_sha256": "6f6e2ed28b232687682a0beb18da50b987a247196053d466059f5f9674093fce",
+  "formula": "Close=round(20+amplitude*sin(2*pi*(t+phase)/cycle),2); t=0..79; Volume=1000000 except final observation=2500000",
+  "fixtures": {
+    "DEMO_A": {
+      "name": "虚构样本 A",
+      "amplitude": 0.2,
+      "cycle": 10,
+      "phase": 6
+    },
+    "DEMO_B": {
+      "name": "虚构样本 B",
+      "amplitude": 0.2,
+      "cycle": 15,
+      "phase": 2
+    },
+    "DEMO_C": {
+      "name": "虚构样本 C",
+      "amplitude": 0.4,
+      "cycle": 5,
+      "phase": 2
+    },
+    "DEMO_D": {
+      "name": "虚构样本 D",
+      "amplitude": 0.2,
+      "cycle": 5,
+      "phase": 0
+    }
+  },
+  "indicator_settings": {
+    "rsi_period": 14,
+    "macd_fast": 12,
+    "macd_slow": 26,
+    "macd_signal": 9,
+    "ma_periods": [
+      5,
+      10,
+      20,
+      60
+    ],
+    "bollinger_period": 20,
+    "bollinger_std": 2,
+    "volume_average_observations": 20
+  },
+  "screening_settings": {
+    "rsi_oversold_screen": 45,
+    "min_volume_ratio": 1.2,
+    "max_recommendations_per_type": 5,
+    "rules_source": "strategies.py (includes fixed trend and breakout thresholds)"
+  },
+  "historical_review": null,
+  "llm_used": false,
+  "analyzed_stocks": [
+    {
+      "code": "DEMO_A",
+      "name": "虚构样本 A",
+      "sector": "其他",
+      "price": 20.0,
+      "daily_change": -0.0059642147,
+      "weekly_change": -0.0059642147,
+      "rsi": 44.1176470588,
+      "macd_bullish": true,
+      "macd_golden_cross": false,
+      "macd_improving": false,
+      "ma_bullish": false,
+      "above_bb_mid": false,
+      "below_bb_upper": true,
+      "below_bb_lower": false,
+      "vol_ratio": 2.3255813953,
+      "ma_values": {
+        "ma5": 20.124,
+        "ma10": 20.0,
+        "ma20": 20.0,
+        "ma60": 20.0
+      }
+    },
+    {
+      "code": "DEMO_B",
+      "name": "虚构样本 B",
+      "sector": "其他",
+      "price": 20.12,
+      "daily_change": -0.0024789291,
+      "weekly_change": -0.0014888337,
+      "rsi": 55.5555555556,
+      "macd_bullish": true,
+      "macd_golden_cross": false,
+      "macd_improving": false,
+      "ma_bullish": true,
+      "above_bb_mid": true,
+      "below_bb_upper": true,
+      "below_bb_lower": false,
+      "vol_ratio": 2.3255813953,
+      "ma_values": {
+        "ma5": 20.166,
+        "ma10": 20.049,
+        "ma20": 20.0415,
+        "ma60": 20.0
+      }
+    },
+    {
+      "code": "DEMO_C",
+      "name": "虚构样本 C",
+      "sector": "其他",
+      "price": 20.38,
+      "daily_change": 0.019,
+      "weekly_change": 0.006916996,
+      "rsi": 51.5837104072,
+      "macd_bullish": true,
+      "macd_golden_cross": true,
+      "macd_improving": true,
+      "ma_bullish": false,
+      "above_bb_mid": true,
+      "below_bb_upper": true,
+      "below_bb_lower": false,
+      "vol_ratio": 2.3255813953,
+      "ma_values": {
+        "ma5": 20.0,
+        "ma10": 20.0,
+        "ma20": 20.0,
+        "ma60": 20.0
+      }
+    },
+    {
+      "code": "DEMO_D",
+      "name": "虚构样本 D",
+      "sector": "其他",
+      "price": 19.81,
+      "daily_change": -0.0035211268,
+      "weekly_change": -0.0095,
+      "rsi": 45.4545454545,
+      "macd_bullish": false,
+      "macd_golden_cross": false,
+      "macd_improving": false,
+      "ma_bullish": false,
+      "above_bb_mid": false,
+      "below_bb_upper": true,
+      "below_bb_lower": false,
+      "vol_ratio": 2.3255813953,
+      "ma_values": {
+        "ma5": 20.0,
+        "ma10": 20.0,
+        "ma20": 20.0,
+        "ma60": 20.0
+      }
+    }
+  ],
+  "summary": {
+    "date": "2024-04-19",
+    "total_scanned": 4,
+    "recommendations": {
+      "超卖反弹": [
+        {
+          "code": "DEMO_A",
+          "name": "虚构样本 A",
+          "sector": "其他",
+          "price": 20.0,
+          "daily_change": -0.0059642147,
+          "weekly_change": -0.0059642147,
+          "rsi": 44.1176470588,
+          "macd_bullish": true,
+          "macd_golden_cross": false,
+          "macd_improving": false,
+          "ma_bullish": false,
+          "above_bb_mid": false,
+          "below_bb_upper": true,
+          "below_bb_lower": false,
+          "vol_ratio": 2.3255813953,
+          "ma_values": {
+            "ma5": 20.124,
+            "ma10": 20.0,
+            "ma20": 20.0,
+            "ma60": 20.0
+          }
+        }
+      ],
+      "趋势向好": [
+        {
+          "code": "DEMO_B",
+          "name": "虚构样本 B",
+          "sector": "其他",
+          "price": 20.12,
+          "daily_change": -0.0024789291,
+          "weekly_change": -0.0014888337,
+          "rsi": 55.5555555556,
+          "macd_bullish": true,
+          "macd_golden_cross": false,
+          "macd_improving": false,
+          "ma_bullish": true,
+          "above_bb_mid": true,
+          "below_bb_upper": true,
+          "below_bb_lower": false,
+          "vol_ratio": 2.3255813953,
+          "ma_values": {
+            "ma5": 20.166,
+            "ma10": 20.049,
+            "ma20": 20.0415,
+            "ma60": 20.0
+          }
+        }
+      ],
+      "放量突破": [
+        {
+          "code": "DEMO_C",
+          "name": "虚构样本 C",
+          "sector": "其他",
+          "price": 20.38,
+          "daily_change": 0.019,
+          "weekly_change": 0.006916996,
+          "rsi": 51.5837104072,
+          "macd_bullish": true,
+          "macd_golden_cross": true,
+          "macd_improving": true,
+          "ma_bullish": false,
+          "above_bb_mid": true,
+          "below_bb_upper": true,
+          "below_bb_lower": false,
+          "vol_ratio": 2.3255813953,
+          "ma_values": {
+            "ma5": 20.0,
+            "ma10": 20.0,
+            "ma20": 20.0,
+            "ma60": 20.0
+          }
+        }
+      ]
+    },
+    "counts": {
+      "超卖反弹": 1,
+      "趋势向好": 1,
+      "放量突破": 1
+    }
+  },
+  "formatted_recommendations": [
+    {
+      "date": "2024-04-19",
+      "ticker": "DEMO_A",
+      "name": "虚构样本 A",
+      "sector": "其他",
+      "recommendation_type": "超卖反弹",
+      "price": 20.0,
+      "rsi": 44.1176470588,
+      "macd_signal": "bullish",
+      "volume_ratio": 2.3255813953,
+      "confidence": "中",
+      "reasoning": "RSI=44处于超卖区; MACD多头"
+    },
+    {
+      "date": "2024-04-19",
+      "ticker": "DEMO_B",
+      "name": "虚构样本 B",
+      "sector": "其他",
+      "recommendation_type": "趋势向好",
+      "price": 20.12,
+      "rsi": 55.5555555556,
+      "macd_signal": "bullish",
+      "volume_ratio": 2.3255813953,
+      "confidence": "中",
+      "reasoning": "均线多头排列; RSI=56适中; 周涨幅-0.1%"
+    },
+    {
+      "date": "2024-04-19",
+      "ticker": "DEMO_C",
+      "name": "虚构样本 C",
+      "sector": "其他",
+      "recommendation_type": "放量突破",
+      "price": 20.38,
+      "rsi": 51.5837104072,
+      "macd_signal": "bullish",
+      "volume_ratio": 2.3255813953,
+      "confidence": "高",
+      "reasoning": "量比2.33; 日涨幅1.9%"
+    }
+  ]
+}

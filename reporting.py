@@ -10,10 +10,13 @@ def generate_report(
     recommendations: List[Dict[str, Any]],
     summary: Dict[str, Any],
     llm_picks: Optional[Dict[str, Dict[str, Any]]] = None,
+    *,
+    report_date: Optional[date] = None,
 ) -> str:
+    """Render a report; callers may fix its date for reproducible research samples."""
     lines = [
         "=" * 60,
-        f"股票分析日报 - {date.today().isoformat()}",
+        f"股票分析日报 - {(report_date or date.today()).isoformat()}",
         "=" * 60,
         "",
     ]

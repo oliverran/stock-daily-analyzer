@@ -9,6 +9,9 @@ def main() -> int:
     p_demo = sub.add_parser("demo", help="Run an offline backtest with synthetic data; no API key needed")
     p_demo.add_argument("--out", default="reports/demo", help="Output directory (default: reports/demo)")
 
+    p_daily_demo = sub.add_parser("demo-daily", help="Generate a daily report from fictional prices, offline")
+    p_daily_demo.add_argument("--out", default="reports/daily-demo", help="Output directory (default: reports/daily-demo)")
+
     p_bt = sub.add_parser("backtest", help="Run a configured backtest using live data providers")
     p_bt.add_argument("--config", required=True, help="实验配置文件路径，例如 experiments/default_a_share_daily.json")
     p_bt.add_argument("--out", default="reports/experiments", help="输出目录")
@@ -18,6 +21,15 @@ def main() -> int:
 
     args = p.parse_args()
 
+    if args.cmd == "demo-daily":
+        from qf.daily_demo import DAILY_DEMO_WARNING, run_daily_demo
+
+        print(DAILY_DEMO_WARNING)
+        report_path = run_daily_demo(Path(args.out))
+        print("Offline daily report complete: 4 fictional symbols, 80 weekday observations each.")
+        for name in ("daily-report.txt", "inputs.csv", "analysis.json", "README.md", "README.en.md"):
+            print(str(report_path.parent / name))
+        return 0
     if args.cmd == "demo":
         from qf.demo import DEMO_WARNING, run_demo
 
