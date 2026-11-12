@@ -210,16 +210,22 @@ docker-compose up -d --build
 
 ## 配置定时任务
 
+### 调度边界与时区
+
+- 以下规则只筛选周一至周五，不识别 A 股交易所节假日，不能称作“每个交易日”。当前 `main.py` 调用 `run_daily_analysis()`，`analyzer.py` 中没有按交易日跳过执行的检查；休市日仍可能分析上一交易日行情。
+- cron 示例按 cron 服务所用的主机时区解释。用 `date +'%Z %z'` 检查主机时区，并核对 cron 服务配置；Docker 容器需单独检查。下例在 `Asia/Shanghai` 时区对应北京时间 15:30 / 20:00；UTC 主机应分别改为 `30 7 * * 1-5` / `0 12 * * 1-5`。不同 cron 实现对 `CRON_TZ` 的支持不同，不应直接假定可用。
+- 应用以本地 `date.today()` 标记分析日期，报告生成日期不代表行情日期。生产运行需另加交易日判断，并核对最新行情的日期和完整性；延后运行也不保证数据源已更新。本指南没有配置交易所日历或数据新鲜度保护。
+
 ### 使用Cron（推荐）
 
 ```bash
 # 编辑crontab
 crontab -e
 
-# 添加以下内容（每个交易日15:30执行）
+# 添加以下内容（周一至周五15:30，按 cron 服务时区）
 30 15 * * 1-5 cd /home/user/stock-daily-analyzer && /home/user/stock-daily-analyzer/venv/bin/python /home/user/stock-daily-analyzer/main.py >> /var/log/stock-analyzer/cron.log 2>&1
 
-# 或者晚上8点执行（确保数据已更新）
+# 或者周一至周五20:00执行（仍需检查行情是否已更新）
 0 20 * * 1-5 cd /home/user/stock-daily-analyzer && /home/user/stock-daily-analyzer/venv/bin/python /home/user/stock-daily-analyzer/main.py >> /var/log/stock-analyzer/cron.log 2>&1
 
 # 查看定时任务
@@ -227,6 +233,14 @@ crontab -l
 ```
 
 ### 使用systemd timer
+
+下例显式使用 `Asia/Shanghai` 调度，避免主机时区不同导致触发时间偏移；它不会设置 Python 进程的本地时区，也不会识别交易所休市日。`Persistent=true` 会在计时器重新启用时补触发停机期间错过的任务，补触发可能发生在周末或休市日。
+
+可在安装前只解析日历表达式（不会创建或运行任务）：
+
+```bash
+systemd-analyze calendar 'Mon..Fri *-*-* 15:30:00 Asia/Shanghai'
+```
 
 ```bash
 # 创建timer文件
@@ -238,7 +252,7 @@ Description=Stock Daily Analyzer Timer
 Requires=stock-analyzer.service
 
 [Timer]
-OnCalendar=Mon-Fri 15:30
+OnCalendar=Mon..Fri *-*-* 15:30:00 Asia/Shanghai
 Persistent=true
 
 [Install]
