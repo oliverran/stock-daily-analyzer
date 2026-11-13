@@ -46,6 +46,8 @@ GitHub 文件页显示 HTML 源码，不会运行报告。请将整个 `docs/dem
 
 教程固定项目代码版本，依赖版本在安装时解析。所有价格均为虚构，参数对比不能证明策略盈利。[可先查看 Notebook 源码](notebooks/offline_demo.ipynb)。如果无法访问 Colab，可使用下方本地安装流程，或直接看[免安装预览](docs/demo/README.md)。
 
+Colab 内嵌图表是静态概览。需要按日期查看持仓时，请运行教程第 5 节，下载并完整解压 ZIP，再用本地浏览器打开 `report.html`；支持点击圆点 / 日期和键盘导航，不执行 JavaScript。
+
 ## 快速开始
 
 需要 Git 和 Python 3.9+。首次安装需要联网下载依赖。
