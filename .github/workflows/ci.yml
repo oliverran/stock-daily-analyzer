@@ -38,6 +38,9 @@ jobs:
       - name: Install report browser checks
         if: matrix.python-version == '3.12'
         run: |
+          # Notebook --install verifies a pinned historical commit. Restore the
+          # checked-out source so browser QA tests this PR, not that old wheel.
+          python -m pip install --no-deps -e .
           python -m pip install playwright
           python -m playwright install --with-deps chromium
       - name: Check offline report in Chromium
