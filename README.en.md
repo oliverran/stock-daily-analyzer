@@ -44,6 +44,8 @@ Run the actual synthetic backtest, inspect weights, compare TopK settings, and d
 
 The project revision is fixed for this tutorial; dependency versions are resolved during installation. All prices are fictional, and the comparison is not evidence of a profitable strategy. [View the notebook source](notebooks/offline_demo.ipynb) before running it. If Colab is unavailable, use the local instructions below or the [installation-free preview](docs/demo/README.en.md).
 
+The inline Colab chart is a static overview. For date-to-holdings navigation, run section 5, download and fully extract the ZIP, then open `report.html` in a local browser. Chart/date links and keyboard navigation work without JavaScript.
+
 ## Quick start
 
 You need Git and **Python 3.9 or newer**. The first installation requires internet access.
