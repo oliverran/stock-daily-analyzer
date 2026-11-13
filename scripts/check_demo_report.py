@@ -59,6 +59,7 @@ def main() -> None:
             expect(selected).not_to_be_visible()
             page.reload()
             expect(page.locator("#day-59")).to_be_visible()
+            page.screenshot(path=str(screenshot_dir / f"selected-holdings-{width}.png"), full_page=True)
             page.locator("#day-59").get_by_role("link", name="返回图表").click()
             page.screenshot(path=str(screenshot_dir / f"report-{width}.png"), full_page=True)
             page.get_by_role("link", name="独立图表 SVG").click()
