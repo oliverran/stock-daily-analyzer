@@ -9,6 +9,7 @@ import argparse
 import json
 import tempfile
 from pathlib import Path
+from html.parser import HTMLParser
 from zipfile import ZipFile
 
 import nbformat
@@ -18,6 +19,34 @@ from nbclient import NotebookClient
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK = ROOT / "notebooks" / "offline_demo.ipynb"
+
+
+class ReportLinks(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = set()
+        self.fragments = set()
+        self.has_script = False
+        self.csp = ""
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "article" and attrs.get("id", "").startswith("day-"):
+            self.ids.add(attrs["id"])
+        if attrs.get("href", "").startswith("#day-"):
+            self.fragments.add(attrs["href"][1:])
+        self.has_script |= tag == "script"
+        if tag == "meta" and attrs.get("http-equiv") == "Content-Security-Policy":
+            self.csp = attrs.get("content", "")
+
+
+def verify_report(report: str, observations: int) -> None:
+    parsed = ReportLinks()
+    parsed.feed(report)
+    expected = {f"day-{i}" for i in range(observations)}
+    assert parsed.ids == parsed.fragments == expected, "Export must include every linked daily observation"
+    assert not parsed.has_script, "Export must remain script-free"
+    assert "default-src 'none'" in parsed.csp
 
 
 def main() -> None:
@@ -62,6 +91,7 @@ CurlSession.request = unexpected_request
             assert set(archive.namelist()) == expected_names
             summary = json.loads(archive.read("summary.json"))
             assert summary["data_source"] == "deterministic_synthetic"
+            verify_report(archive.read("report.html").decode("utf-8"), summary["observations"])
             with archive.open("synthetic-comparison.csv") as source:
                 comparison = pd.read_csv(source).set_index("top_k")
             assert comparison.index.tolist() == [1, 2, 3]
@@ -69,7 +99,7 @@ CurlSession.request = unexpected_request
             assert abs(comparison.loc[2, "total_return"] - summary["metrics"]["total_return"]) < 1e-9
             assert comparison["total_return"].nunique() > 1
         print("Notebook validated: four tutorial cells executed with external requests blocked; "
-              "SVG, 60-row demo, three TopK scenarios, and seven-file ZIP verified.")
+              "SVG, 60 linked daily holdings in the script-free HTML export, three TopK scenarios, and seven-file ZIP verified.")
         print("Pinned installation verified." if args.install else "Installation cell skipped intentionally.")
         print("Google Colab runtime not exercised.")
 
