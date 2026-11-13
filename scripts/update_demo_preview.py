@@ -58,7 +58,9 @@ def update_preview(destination: Path) -> None:
 - [净值 CSV](equity.csv)：逐日模拟净值，图表的全部 {summary['observations']} 个观察值来自这里。
 - [持仓 CSV](holdings.csv)：每日组合权重。
 - [参数与指标 JSON](summary.json)：明确标注合成数据来源，记录模拟设置和指标。
-- [完整报告 HTML 源文件](report.html)：GitHub 显示源码。将本目录全部文件保存到本地，再用浏览器打开 `report.html`，可查看可折叠参数与完整净值表。
+- [完整报告 HTML 源文件](report.html)：GitHub 显示源码。将本目录全部文件保存到本地，再用浏览器打开 `report.html`。点击图表圆点或日期表可查看当天模拟净值与持仓，支持键盘和浏览器返回，无需脚本。
+
+持仓是引擎当日调仓及成本处理后的记录，不代表当日收益贡献、交易信号或成交原因。独立 SVG 保持为可移植的静态图。
 
 ## 自己复现
 
@@ -117,7 +119,9 @@ Annualized values and Sharpe ratios from a short synthetic sample do not represe
 - [Equity CSV](equity.csv): daily simulated equity, including all {summary['observations']} observations used in the chart.
 - [Holdings CSV](holdings.csv): daily portfolio weights.
 - [Parameters and metrics JSON](summary.json): synthetic-data provenance, settings, and metrics.
-- [Full report HTML source](report.html): GitHub shows source. Save all files in this directory locally, then open `report.html` in a browser to inspect the expandable parameters and full equity table.
+- [Full report HTML source](report.html): GitHub shows source. Save all files in this directory locally, then open `report.html` in a browser. Select a chart point or date-table link to inspect that day's simulated equity and holdings, with keyboard and browser Back support and no scripts.
+
+Holdings are the engine's recorded weights after that day's rebalancing and cost processing, not return attribution, trading signals, or explanations of fills. The standalone SVG remains a portable static chart.
 
 ## Reproduce it yourself
 

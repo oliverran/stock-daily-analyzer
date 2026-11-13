@@ -11,7 +11,7 @@ from typing import Any
 import pandas as pd
 
 
-def render_equity_svg(equity: pd.Series) -> str:
+def render_equity_svg(equity: pd.Series, *, link_observations: bool = False) -> str:
     """Render every observation as an accessible, self-contained SVG chart."""
     values = [float(value) for value in equity]
     if not values or any(not math.isfinite(value) or value <= 0 for value in values):
@@ -27,6 +27,14 @@ def render_equity_svg(equity: pd.Series) -> str:
         for i, value in enumerate(values)
     )
     grid = []
+    links = ""
+    if link_observations:
+        links = "".join(
+            f'<a href="#day-{i}" aria-label="查看 {date} 的模拟净值与持仓">'
+            f'<circle cx="{point.split(",")[0]}" cy="{point.split(",")[1]}" r="5" '
+            f'fill="#077d86" stroke="white"><title>{date}: {value:,.2f}</title></circle></a>'
+            for i, (date, value, point) in enumerate(zip(dates, values, points.split()))
+        )
     for i in range(5):
         y = top + (bottom - top) * i / 4
         value = high - (high - low) * i / 4
@@ -44,6 +52,7 @@ def render_equity_svg(equity: pd.Series) -> str:
 <text x="100" y="97" font-size="13" fill="#526075">Simulation units · y-axis zoomed to observed range</text>
 {''.join(grid)}
 <polyline data-series="equity" points="{points}" fill="none" stroke="#077d86" stroke-width="3" stroke-linejoin="round"/>
+{links}
 <text x="{left}" y="377" font-size="14" fill="#526075">{dates[0]}</text>
 <text x="{right}" y="377" text-anchor="end" font-size="14" fill="#526075">{dates[-1]}</text>
 <text x="36" y="414" font-size="14" fill="#526075">{len(values)} weekday observations · Fixed synthetic prices · No API key or market-data requests</text>
@@ -61,6 +70,25 @@ def write_demo_report(out_dir: Path, equity: pd.Series, holdings: pd.DataFrame, 
     if holdings.empty or any(not math.isfinite(float(value)) for value in holdings.to_numpy().flat):
         raise ValueError("Demo holdings must contain finite values")
     chart = render_equity_svg(equity)
+    linked_chart = render_equity_svg(equity, link_observations=True)
+    # A linked chart is a group, not a single image whose descendants may be hidden
+    # from assistive technology. The downloadable SVG stays self-contained.
+    linked_chart = linked_chart.replace('role="img"', 'role="group"')
+    observations = []
+    for i, (date, value) in enumerate(equity.items()):
+        label = escape(str(date.date() if hasattr(date, "date") else date))
+        rows = "".join(
+            f'<tr><th scope="row">{escape(str(symbol))}</th><td>{float(weight):.2%}</td></tr>'
+            for symbol, weight in holdings.iloc[i].items()
+        )
+        observations.append(
+            f'<article class="observation" id="day-{i}" tabindex="-1" aria-labelledby="day-title-{i}">'
+            f'<h3 id="day-title-{i}">{label} · 模拟净值 {float(value):,.2f}</h3>'
+            f'<table><caption>当日记录权重 · __CASH__ 表示现金</caption>'
+            f'<thead><tr><th scope="col">标的</th><th scope="col">权重</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table><p><a href="#chart">返回图表</a> · '
+            f'<a href="#daily-data">选择其他日期</a></p></article>'
+        )
     metrics = summary["metrics"]
     if any(not math.isfinite(float(metrics[name])) for name in ("total_return", "cagr", "sharpe", "max_drawdown")):
         raise ValueError("Demo metrics must be finite")
@@ -78,9 +106,9 @@ def write_demo_report(out_dir: Path, equity: pd.Series, holdings: pd.DataFrame, 
         for symbol, weight in holdings.iloc[-1].items()
     )
     daily_rows = "".join(
-        f'<tr><th scope="row">{escape(str(date.date() if hasattr(date, "date") else date))}</th>'
+        f'<tr><th scope="row"><a href="#day-{i}">{escape(str(date.date() if hasattr(date, "date") else date))}</a></th>'
         f'<td>{float(value):,.2f}</td></tr>'
-        for date, value in equity.items()
+        for i, (date, value) in enumerate(equity.items())
     )
     config_json = escape(json.dumps(summary["config"], ensure_ascii=False, indent=2, allow_nan=False))
     symbols = escape(", ".join(str(symbol) for symbol in summary["symbols"]))
@@ -131,6 +159,9 @@ caption {{ text-align: left; color: #526075; padding-bottom: 10px; }}
 pre {{ background: #f3f6f9; padding: 16px; border-radius: 10px; overflow-x: auto; font-size: 13px; }}
 code {{ overflow-wrap: anywhere; }}
 summary {{ cursor: pointer; font-weight: 650; }}
+.observation {{ display: none; scroll-margin-top: 16px; }}
+.observation:target {{ display: block; outline: 3px solid #077d86; outline-offset: 8px; }}
+svg a:focus-visible circle, svg a:hover circle {{ fill: #b46b20; stroke-width: 3; }}
 footer {{ padding-top: 24px; font-size: 14px; color: #526075; }}
 @media (max-width: 720px) {{ .grid, .columns {{ grid-template-columns: 1fr 1fr; }} main {{ padding: 24px 16px; }} .columns {{ grid-template-columns: 1fr; }} .metric {{ padding: 14px; }} .metric strong {{ font-size: 24px; }} }}
 @media print {{ body {{ background: white; }} main {{ padding: 0; }} .panel, .metric, figure {{ break-inside: avoid; }} }}
@@ -147,14 +178,17 @@ footer {{ padding-top: 24px; font-size: 14px; color: #526075; }}
 <p class="muted">{start} 至 {end} · {len(equity)} 条工作日观察 · {symbols}</p>
 <div class="grid">{cards}</div>
 <p class="muted">这些指标只演示输出格式；短期合成样本的年化值和 Sharpe 不代表可实现收益。</p>
-<figure>{chart}<figcaption>逐点绘制 equity.csv 的全部观察值。纵轴为模拟资金单位，已缩放到观察区间。历史数据不足因子回看窗口时保持现金。</figcaption></figure>
+<figure id="chart">{linked_chart}<figcaption>点击图中圆点查看对应日期的模拟净值与持仓；手机或键盘用户也可使用下方日期表。逐点绘制 equity.csv 的全部观察值。纵轴为模拟资金单位，已缩放到观察区间。历史数据不足因子回看窗口时保持现金。</figcaption></figure>
 </section>
+<section class="panel" aria-labelledby="observation-title"><h2 id="observation-title">按日期查看模拟持仓</h2>
+<p>在图表圆点或<a href="#daily-data">日期表</a>中选择一天。权重来自 holdings.csv 的同一行，是引擎当日调仓及成本处理后的记录，不代表当日收益的贡献权重、交易信号或成交原因。</p>
+{''.join(observations)}</section>
 <div class="columns">
 <section class="panel"><h2>最后一天的组合权重</h2><table><caption>{end} · __CASH__ 表示现金</caption><thead><tr><th scope="col">标的</th><th scope="col" style="text-align:right">权重</th></tr></thead><tbody>{last_weights}</tbody></table></section>
 <section class="panel"><h2>下一步可以做什么</h2><ol><li>打开 CSV，核对净值与每日持仓。</li><li>重新运行 <code>stock-analyzer demo --out reports/another-demo</code>，比较输出。</li><li>回到项目 README，了解真实数据接入与研究边界。</li></ol><p>本页没有脚本、CDN、字体下载或数据上传。CSV / JSON 链接指向同目录文件。</p></section>
 </div>
 <section class="panel"><h2>如何阅读这个演示</h2><p>数据是 DEMO_A、DEMO_B、DEMO_C 的固定价格公式，调用项目的 DailyBacktester，包含示例佣金、滑点和交易约束。它不验证行情接口、新闻或 LLM 服务。</p><p>{calendar} 使用普通工作日，并非交易所日历。交易约束是简化示例，不应用于推断实盘表现。</p><details><summary>查看完整模拟参数</summary><pre>{config_json}</pre></details></section>
-<section class="panel"><details><summary>查看全部 {len(equity)} 条净值数据（图表的文字替代）</summary><table><caption>显示值保留两位小数，完整精度见 equity.csv。</caption><thead><tr><th scope="col">日期</th><th scope="col" style="text-align:right">模拟净值</th></tr></thead><tbody>{daily_rows}</tbody></table></details></section>
+<section class="panel" id="daily-data"><details open><summary>查看全部 {len(equity)} 条净值数据（点击日期查看持仓）</summary><table><caption>图表的文字替代。显示值保留两位小数，完整精度见 equity.csv。</caption><thead><tr><th scope="col">日期</th><th scope="col" style="text-align:right">模拟净值</th></tr></thead><tbody>{daily_rows}</tbody></table></details></section>
 <footer>Stock Daily Analyzer · 仅供学习和研究 · Synthetic data only. Not investment advice.</footer>
 </main></body></html>
 '''

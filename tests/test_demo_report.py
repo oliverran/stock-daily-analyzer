@@ -36,9 +36,20 @@ def test_report_is_self_contained_and_matches_outputs(tmp_path):
     document = Document(html)
     assert not {"script", "link", "iframe", "object", "embed", "img", "form"}.intersection(document.tags)
     assert not [key for key, _ in document.attributes if key.startswith("on") or key == "src"]
-    assert sorted(value for key, value in document.attributes if key == "href") == [
+    hrefs = [value for key, value in document.attributes if key == "href"]
+    assert sorted(value for value in hrefs if not value.startswith("#")) == [
         "equity.csv", "equity.svg", "holdings.csv", "summary.json"
     ]
+    ids = [value for key, value in document.attributes if key == "id"]
+    assert len(ids) == len(set(ids))
+    assert all(value[1:] in ids for value in hrefs if value.startswith("#"))
+    for i in range(len(equity)):
+        assert hrefs.count(f"#day-{i}") == 2
+        panel = html.split(f'id="day-{i}"')[1].split("</article>")[0]
+        assert f"{equity.iloc[i]:,.2f}" in panel
+        for symbol, weight in holdings.iloc[i].items():
+            assert f'<th scope="row">{symbol}</th><td>{weight:.2%}</td>' in panel
+    assert "不代表当日收益的贡献权重、交易信号或成交原因" in html
     assert "Content-Security-Policy" in html
     assert "default-src 'none'" in html
     assert '<meta name="description"' in html
@@ -53,7 +64,9 @@ def test_report_is_self_contained_and_matches_outputs(tmp_path):
         assert f"{summary['metrics'][metric]:.2%}" in html
     assert f"{summary['metrics']['sharpe']:.2f}" in html
     chart = (tmp_path / "equity.svg").read_text(encoding="utf-8")
-    assert chart in html
+    assert '<a href="#day-' not in chart
+    linked_chart = render_equity_svg(equity, link_observations=True).replace('role="img"', 'role="group"')
+    assert linked_chart in html
     root = ET.fromstring(chart)
     line = root.find("./{http://www.w3.org/2000/svg}g/{http://www.w3.org/2000/svg}polyline")
     points = [tuple(map(float, item.split(","))) for item in line.attrib["points"].split()]

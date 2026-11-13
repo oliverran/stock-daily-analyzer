@@ -43,7 +43,9 @@ Annualized values and Sharpe ratios from a short synthetic sample do not represe
 - [Equity CSV](equity.csv): daily simulated equity, including all 60 observations used in the chart.
 - [Holdings CSV](holdings.csv): daily portfolio weights.
 - [Parameters and metrics JSON](summary.json): synthetic-data provenance, settings, and metrics.
-- [Full report HTML source](report.html): GitHub shows source. Save all files in this directory locally, then open `report.html` in a browser to inspect the expandable parameters and full equity table.
+- [Full report HTML source](report.html): GitHub shows source. Save all files in this directory locally, then open `report.html` in a browser. Select a chart point or date-table link to inspect that day's simulated equity and holdings, with keyboard and browser Back support and no scripts.
+
+Holdings are the engine's recorded weights after that day's rebalancing and cost processing, not return attribution, trading signals, or explanations of fills. The standalone SVG remains a portable static chart.
 
 ## Reproduce it yourself
 
