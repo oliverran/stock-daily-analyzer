@@ -55,10 +55,13 @@ def generate_report(
         lines.append("")
 
     if llm_picks:
-        lines.append("【LLM智能精选】")
+        lines.append("【候选研究摘要（LLM / 规则回退）】")
         for rec_type, pick in llm_picks.items():
+            if not isinstance(pick, dict):
+                lines.append(f"  类型: {rec_type}：无有效研究摘要，已省略。")
+                continue
             lines.append(f"  类型: {rec_type}")
-            lines.append(f"    最值得买: {pick.get('name')}({pick.get('ticker')})")
+            lines.append(f"    待研究标的: {pick.get('name')}({pick.get('ticker')})")
             lines.append(f"    理由: {pick.get('reason')}")
             lines.append("")
 

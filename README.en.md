@@ -131,6 +131,8 @@ Market data comes from AkShare / yfinance. Without LLM credentials, the app skip
 
 These paths are under the source directory. Review the rules in [`config.py`](config.py) and [`strategies.py`](strategies.py). A first run has no previous recommendations to evaluate; full-market scan time depends on the data services.
 
+LLM selections are checked for field types and membership in the current category; names come from the candidate context. Invalid responses use a labelled rule-based fallback. Validation does not verify the explanation. News headlines cannot establish historical causation; attribution summaries remain unverified research material, not buy instructions or return guarantees.
+
 **Optional LLM setup:** copy [`.env.example`](.env.example) to `.env` and replace the placeholders with your own provider credentials:
 
 ```ini
