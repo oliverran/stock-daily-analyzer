@@ -165,7 +165,7 @@ python run_experiment.py --config experiments/default_a_share_daily.json
 输出位于 `reports/experiments/<experiment_name>/`，包含 `equity.csv`、`holdings.csv` 和 `summary.json`。关键参数：
 
 - `universe`：股票代码前缀、ST 过滤、股票数量上限。
-- `data`：行情提供方、缓存目录、请求超时。
+- `data`：行情提供方、缓存目录、请求超时。回测的 `data.provider` 目前仅支持精确值 `"yfinance"`；Akshare 用于获取股票池，不是此处的历史行情适配器。其他值会在联网和创建实验输出前报错，不会静默替换为另一数据源。
 - `factors`：回看窗口与因子权重。
 - `portfolio`：TopK 数量、单票权重上限。
 - `trading`：简化的停牌、涨跌停、T+1 和印花税假设。
