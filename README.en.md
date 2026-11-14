@@ -163,7 +163,7 @@ python run_experiment.py --config experiments/default_a_share_daily.json
 Outputs go to `reports/experiments/<experiment_name>/`: `equity.csv`, `holdings.csv`, and `summary.json`.
 
 - `universe`: symbol prefixes, ST filtering, and stock-count limit.
-- `data`: provider, cache location, and request timeout.
+- `data`: provider, cache location, and request timeout. Backtests currently support only the exact `data.provider` value `"yfinance"`. Akshare supplies the universe, not this historical-price adapter. Other values fail before network access or experiment output creation instead of silently using a different source.
 - `factors`: lookback windows and factor weights.
 - `portfolio`: TopK size and maximum per-stock weight.
 - `trading`: simplified suspension, price-limit, T+1, and stamp-duty assumptions.

@@ -13,10 +13,8 @@ from qf.universe import AkshareAStockUniverseProvider
 
 
 def _build_price_provider(cfg: ExperimentConfig):
-    if cfg.data.provider == "yfinance":
-        inner = YFinancePriceProvider()
-    else:
-        inner = YFinancePriceProvider()
+    # DataConfig rejects unsupported providers before any run side effects.
+    inner = YFinancePriceProvider()
     return CachedPriceProvider(inner, cache_dir=Path(cfg.data.cache_dir))
 
 

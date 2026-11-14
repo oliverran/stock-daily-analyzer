@@ -20,6 +20,14 @@ class DataConfig:
     cache_dir: str
     timeout_seconds: int = 10
 
+    def __post_init__(self) -> None:
+        # Akshare supplies the universe, not the historical-price adapter.
+        # Never silently substitute a different provider in a research run.
+        if self.provider != "yfinance":
+            raise ValueError(
+                f"unsupported data.provider: {self.provider!r}; supported value: 'yfinance'"
+            )
+
 
 @dataclass(frozen=True)
 class FactorConfig:
